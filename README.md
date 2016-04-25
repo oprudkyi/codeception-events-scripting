@@ -40,7 +40,50 @@ Or run the following command:
 
 ## Configuration
 
+Enable extension in the codeception.yml and write commands. 
+Next events are supported:
+- BeforeAll - run before tests on every "codecept run"
+- AfterAll - run after all tests
+- BeforeSuite - run before each suite (use 'suites' array to run only for selected suites)
+- AfterSuite - run after each suite (use 'suites' array to run only for selected suites)
 
+supported next attributes:
+- command - command line to run (for one-liners you can write command directly)
+- description - echoed before command
+- params - additional params for command
+- ignoreErrors - don't break testing if command fails (failed or retval > 0) 
+- suites - single name or array of suites to run command for
+
+
+```yml
+extensions:
+    enabled:
+        - Codeception\Extension\EventsScripting
+    config:
+        Codeception\Extension\EventsScripting:
+            BeforeAll:
+                - command: echo "Before All"
+                - command: echo "Before All with Description"
+                  description: Description of command
+                - echo "Before All single line"
+                - command: echo 
+                  params: "Before All Params"
+                  description: Before All with Params
+                - command: "false"
+                  description: BeforeAll. fail on run but ignore errors
+                  ignoreErrors: true
+            AfterAll:
+                - command: echo "After All"
+            BeforeSuite:
+                - command: echo "Before acceptance suite"
+                  suites: ['acceptance']
+                - command: echo "Before any suite"
+            AfterSuite:
+                - command: echo "After acceptance suite"
+                  suites: 'acceptance'
+                - command: echo "After any suite"
+
+```
 
 ## Contribute
 
