@@ -1,0 +1,26 @@
+{
+    "name": "oprudkyi/codeception-events-scripting",
+    "description": "The Codeception extension for automatically running shell scripts on codeception events",
+    "keywords": ["codeception", "extension", "shell"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oleksii Prudkyi",
+            "email": "Oleksii.Prudkyi@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+		"codeception/codeception": "~2.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+			"Codeception\\Extension\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dev"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

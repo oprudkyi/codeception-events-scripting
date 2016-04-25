@@ -1,0 +1,34 @@
+actor: Tester
+paths:
+    tests: tests
+    log: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+settings:
+    bootstrap: _bootstrap.php
+    colors: true
+    memory_limit: 1024M
+extensions:
+    enabled:
+        - Codeception\Extension\EventsScripting
+    config:
+        Codeception\Extension\EventsScripting:
+            BeforeAll:
+                - command: echo "Before All"
+                - command: echo "Before All with Description"
+                    description: "Description of command"
+                - echo "Before All single line"
+                - command: echo 
+                    params: "Before All Params"
+                - command: echo "BeforeAll only for acceptance"
+                    suites: ['acceptance']
+            AfterAll:
+                - command: echo "After All"
+modules:
+    config:
+        Db:
+            dsn: ''
+            user: ''
+            password: ''
+            dump: tests/_data/dump.sql
