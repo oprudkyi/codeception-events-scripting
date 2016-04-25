@@ -7,7 +7,7 @@ for automatically running shell scripts on codeception events.
 
 ## About
 
-Run shell scripts on codeception's events (like db seeding, stopping-running additional software etc.
+Run shell scripts on codeception's events - before/after tests/suites (like db seeding, stopping-running additional software etc.)
 Inspired by [Phantoman](https://github.com/site5/phantoman) extension for [Codeception](http://codeception.com/), though allow to run anything in more generic way. 
 
 ## Minimum Requirements
@@ -51,7 +51,7 @@ supported next attributes:
 - command - command line to run (for one-liners you can write command directly)
 - description - echoed before command
 - params - additional params for command
-- ignoreErrors - don't break testing if command fails (failed or retval > 0) 
+- ignoreErrors - don't break testing if command fails (failed or retval != 0) 
 - suites - single name or array of suites to run command for
 
 
