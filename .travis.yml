@@ -21,6 +21,7 @@ cache:
     - $HOME/.composer/cache
 
 before_script:
+  - phpenv config-rm xdebug.ini
   - cd sample
   - 'if [ "$TRAVIS_PHP_VERSION" = "5.4" ]; then rm composer.lock; fi'
   - composer install -n --prefer-source
