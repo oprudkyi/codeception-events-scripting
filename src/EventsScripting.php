@@ -36,7 +36,7 @@ class EventsScripting extends \Codeception\Platform\Extension
 	public function __construct($config, $options)
     {
         parent::__construct($config, $options);
-		print_r($this->config);
+		//print_r($this->config);
 	}
 
 	public function __destruct()
