@@ -4,6 +4,7 @@ for automatically running shell scripts on codeception events.
 [![Latest Stable Version](https://poser.pugx.org/oprudkyi/codeception-events-scripting/v/stable)](https://packagist.org/packages/oprudkyi/codeception-events-scripting) 
 [![Total Downloads](https://poser.pugx.org/oprudkyi/codeception-events-scripting/downloads)](https://packagist.org/packages/oprudkyi/codeception-events-scripting) 
 [![License](https://poser.pugx.org/oprudkyi/codeception-events-scripting/license)](https://packagist.org/packages/oprudkyi/codeception-events-scripting)
+[![Build Status](https://travis-ci.org/oprudkyi/codeception-events-scripting.svg?branch=master)](https://travis-ci.org/oprudkyi/codeception-events-scripting)
 
 ## About
 
