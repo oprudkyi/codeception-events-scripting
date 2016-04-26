@@ -68,6 +68,8 @@ EOF;
 		$I->seeInShellOutput($this->afterAll);
 		$I->dontSeeInShellOutput($this->beforeAcceptanceSuite);
 		$I->dontSeeInShellOutput($this->afterAcceptanceSuite);
+		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
+		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
 		chdir('../test/');
     }
 
@@ -84,6 +86,8 @@ EOF;
 		$I->seeInShellOutput($this->afterAll);
 		$I->seeInShellOutput($this->beforeAcceptanceSuite);
 		$I->seeInShellOutput($this->afterAcceptanceSuite);
+		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
+		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
 		chdir('../test/');
     }
 
@@ -100,6 +104,73 @@ EOF;
 		$I->seeInShellOutput($this->afterAll);
 		$I->seeInShellOutput($this->beforeAcceptanceSuite);
 		$I->seeInShellOutput($this->afterAcceptanceSuite);
+		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
+		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
 		chdir('../test/');
     }
+	
+	public function withSuitedEnvironmentNoCommandsTest(AcceptanceTester $I)
+    {
+		chdir('../sample/');
+		$I->runShellCommand('./vendor/bin/codecept run acceptance --env firefox --no-colors');
+		$I->dontSeeInShellOutput("Functional Tests");
+		$I->seeInShellOutput("Acceptance (firefox) Tests");
+		$I->seeInShellOutput($this->beforeAllSmall);
+		$I->seeInShellOutput($this->beforeAll);
+		$I->seeInShellOutput($this->beforeAnySuite);
+		$I->seeInShellOutput($this->afterAnySuite);
+		$I->seeInShellOutput($this->afterAll);
+		$I->seeInShellOutput($this->beforeAcceptanceSuite);
+		$I->seeInShellOutput($this->afterAcceptanceSuite);
+		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
+		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
+		chdir('../test/');
+    }
+	
+	private $twoEnvironmentsOut = <<<'EOF'
+Starting : echo "Before acceptance suite, phantom,chrome environments"
+Before acceptance suite, phantom,chrome environments
+EOF;
+	
+	public function withSuitedEnvironmentOneCommandsTest(AcceptanceTester $I)
+    {
+		chdir('../sample/');
+		$I->runShellCommand('./vendor/bin/codecept run acceptance --env chrome --no-colors');
+		$I->dontSeeInShellOutput("Functional Tests");
+		$I->seeInShellOutput("Acceptance (chrome) Tests");
+		$I->seeInShellOutput($this->beforeAllSmall);
+		$I->seeInShellOutput($this->beforeAll);
+		$I->seeInShellOutput($this->beforeAnySuite);
+		$I->seeInShellOutput($this->afterAnySuite);
+		$I->seeInShellOutput($this->afterAll);
+		$I->seeInShellOutput($this->beforeAcceptanceSuite);
+		$I->seeInShellOutput($this->afterAcceptanceSuite);
+		$I->seeInShellOutput($this->twoEnvironmentsOut);
+		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
+		chdir('../test/');
+    }
+	
+	private $oneEnvironmentsOut = <<<'EOF'
+Starting : echo "Before acceptance suite, phantom environment"
+Before acceptance suite, phantom environment
+EOF;
+	
+	public function withSuitedEnvironmentTwoCommandsTest(AcceptanceTester $I)
+    {
+		chdir('../sample/');
+		$I->runShellCommand('./vendor/bin/codecept run acceptance --env phantom,firefox --no-colors');
+		$I->dontSeeInShellOutput("Functional Tests");
+		$I->seeInShellOutput("Acceptance (phantom, firefox) Tests");
+		$I->seeInShellOutput($this->beforeAllSmall);
+		$I->seeInShellOutput($this->beforeAll);
+		$I->seeInShellOutput($this->beforeAnySuite);
+		$I->seeInShellOutput($this->afterAnySuite);
+		$I->seeInShellOutput($this->afterAll);
+		$I->seeInShellOutput($this->beforeAcceptanceSuite);
+		$I->seeInShellOutput($this->afterAcceptanceSuite);
+		$I->seeInShellOutput($this->twoEnvironmentsOut);
+		$I->seeInShellOutput($this->oneEnvironmentsOut);
+		chdir('../test/');
+    }
+
 }

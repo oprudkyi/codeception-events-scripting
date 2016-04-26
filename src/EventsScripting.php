@@ -94,9 +94,31 @@ class EventsScripting extends \Codeception\Platform\Extension
 					$suites = [$suites];
 				}
 				//skip command, it's not for current suite
-				if(!in_array($this->currentSuite, $suites)) {
+				if(!in_array($this->currentSuite, $suites)
+					&& !in_array($this->currentSuiteBaseName, $suites)
+				) {
 					return;
 				}
+
+				if(isset($command['environments'])) {
+					$environments = $command['environments'];
+					if(is_string($environments)) {
+						$environments = [$environments];
+					}
+
+					$evnironmentSupported = false;
+					foreach($environments as $environment) {
+						if(in_array($environment, $this->currentEnvironment)) {
+							$evnironmentSupported = true;
+							break;
+						}
+					}
+
+					if(!$evnironmentSupported) {
+						return;
+					}
+				}
+
 			}
 
 			$this->runSimpleCommand($commandLine, $description, $ignoreErrors);
@@ -149,16 +171,26 @@ class EventsScripting extends \Codeception\Platform\Extension
 
 		$this->beforeAllWereRun = true;
 	}
+
+	//may contain environment names, like  'acceptance (phantom)' or 'acceptance (phantom, chrome)'
+	private $currentSuite = '';
+	
+	//top level name - acceptance, functional
+	private $currentSuiteBaseName = '';
+
+	//array with environments enabled
+	private $currentEnvironment = [];
 	
 	/**
      * Module After, run after any tests
      */
     public function afterModule()
     {	
+		$this->currentSuite = '';
+		$this->currentSuiteBaseName = '';
+		$this->currentEnvironment = [];
 		$this->runConfigGroup('AfterAll');
 	}
-
-	private $currentSuite = '';
 	
 	/**
      * Before suite is executed
@@ -166,6 +198,13 @@ class EventsScripting extends \Codeception\Platform\Extension
 	public function beforeSuite(\Codeception\Event\SuiteEvent $e) 
 	{
 		$this->currentSuite = $e->getSuite()->getName();
+		$this->currentSuiteBaseName = $e->getSuite()->getBaseName();
+		$settings = $e->getSettings();
+		if(isset($settings['current_environment'])) {
+			$this->currentEnvironment = explode(',', $settings['current_environment']);
+		} else {
+			$this->currentEnvironment = [];
+		}
 		$this->runConfigGroup('BeforeSuite');
 	}
 

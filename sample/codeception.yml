@@ -31,6 +31,12 @@ extensions:
                 - command: echo "Before acceptance suite"
                   suites: ['acceptance']
                 - command: echo "Before any suite"
+                - command: echo "Before acceptance suite, phantom environment"
+                  suites: ['acceptance']
+                  environments: phantom
+                - command: echo "Before acceptance suite, phantom,chrome environments"
+                  suites: ['acceptance']
+                  environments: ['phantom', 'chrome']
             AfterSuite:
                 - command: echo "After acceptance suite"
                   suites: 'acceptance'

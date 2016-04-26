@@ -53,7 +53,8 @@ supported next attributes:
 - description - echoed before command
 - params - additional params for command
 - ignoreErrors - don't break testing if command fails (failed or retval != 0) 
-- suites - single name or array of suites to run command for
+- suites - single name or array of suites to run command for (applied to base name, like 'acceptance' as well to long name 'acceptance (phantom, firefox)')
+- environments - single name or array of environments 
 
 
 ```yml
@@ -79,6 +80,12 @@ extensions:
                 - command: echo "Before acceptance suite"
                   suites: ['acceptance']
                 - command: echo "Before any suite"
+                - command: echo "Before acceptance suite, phantom environment"
+                  suites: ['acceptance']
+                  environments: phantom
+                - command: echo "Before acceptance suite, phantom,chrome environments"
+                  suites: ['acceptance']
+                  environments: ['phantom', 'chrome']
             AfterSuite:
                 - command: echo "After acceptance suite"
                   suites: 'acceptance'
