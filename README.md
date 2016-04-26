@@ -93,6 +93,34 @@ extensions:
 
 ```
 
+Real example (start/stop mailcatcher and seed db):
+```yml
+        Codeception\Extension\EventsScripting:
+          BeforeAll:
+              - command: ./artisan db:seed-test --env=testing
+                description: Reset db and seed
+          BeforeSuite:
+              - command: GEM_HOME=vendor/ruby vendor/ruby/bin/mailcatcher --ip 127.0.0.1 --smtp-port 11031 --http-port 11091
+                suites: 'acceptance' 
+                description: Start mailcatcher
+          AfterSuite:
+              - command: curl -s -X DELETE http://127.0.0.1:11091
+                suites: 'acceptance' 
+                description: Stop mailcatcher
+                ignoreErrors: true
+
+```
+
+## Testing
+
+```sh
+cd sample
+composer install -n --prefer-source
+cd ../test
+composer install -n --prefer-source
+./vendor/bin/codecept run
+```
+
 ## Contribute
 
 This package is (yet) under development and refactoring but is ready for
