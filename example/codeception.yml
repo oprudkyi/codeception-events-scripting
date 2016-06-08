@@ -19,7 +19,7 @@ extensions:
                 - command: echo "Before All with Description"
                   description: Description of command
                 - echo "Before All single line"
-                - command: echo 
+                - command: echo
                   params: "Before All Params"
                   description: Before All with Params
                 - command: "false"
