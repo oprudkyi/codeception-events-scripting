@@ -14,40 +14,37 @@ use Codeception\Exception\ExtensionException;
 
 class EventsScripting extends \Codeception\Platform\Extension
 {
-    // list events to listen to
-    public static $events = array(
+  // list events to listen to
+  public static $events = array(
 		//run before any tests
 		'module.init' => 'beforeModule',
-
 		//Before suite is executed
-		'suite.before' => 'beforeSuite', 
-
+		'suite.before' => 'beforeSuite',
 		//After suite was executed
-        'suite.after' => 'afterSuite',
+    'suite.after' => 'afterSuite',
+  );
 
-		/*
-        'test.before' => 'beforeTest',
-        'step.before' => 'beforeStep',
-        'test.fail' => 'testFailed',
-        'result.print.after' => 'print',
-		*/
-    );
+  private $beforeAllWereRun = false;
 
-	public function __construct($config, $options)
-    {
-        parent::__construct($config, $options);
-		//print_r($this->config);
-	}
+  //may contain environment names, like  'acceptance (phantom)' or 'acceptance (phantom, chrome)'
+	private $currentSuite = '';
+
+	//top level name - acceptance, functional
+	private $currentSuiteBaseName = '';
+
+	//array with environments enabled
+	private $currentEnvironment = [];
 
 	public function __destruct()
-    {
+  {
 		$this->afterModule();
-    }
+  }
 
-    /**
-     * run command
-     */
-	private function runSimpleCommand($command, $description, $ignoreErrors) {
+  /**
+   * run command
+   */
+	private function runSimpleCommand($command, $description, $ignoreErrors)
+  {
 		$this->writeln("Starting : {$description}");
 		$lastLine = system($command, $retval);
 		if($lastLine === FALSE) {
@@ -64,7 +61,8 @@ class EventsScripting extends \Codeception\Platform\Extension
 		}
 	}
 
-	private function processCommand($command) {
+	private function processCommand($command)
+  {
 		if(is_string($command)) {
 			$this->runSimpleCommand($command, $command, false);
 		} else if(is_array($command)) {
@@ -78,17 +76,24 @@ class EventsScripting extends \Codeception\Platform\Extension
 			if(isset($command['ignoreErrors'])) {
 				$ignoreErrors = (bool)$command['ignoreErrors'];
 			}
-			
+
 			if(isset($command['params'])) {
-				$commandLine .= " " . $command['params'];
+				$commandLine .= ' ' . $command['params'];
 			}
-			
+
 			$description = $commandLine;
 			if(isset($command['description'])) {
 				$description = $command['description'];
 			}
 
-			if($this->currentSuite != '' && isset($command['suites'])) {
+      // check if current OS is supported
+      if(isset($command['platforms'])) {
+        if(!$this->isPlatformSupported($command['platforms'])) {
+          return;
+        }
+      }
+
+			if(!empty($this->currentSuite) && isset($command['suites'])) {
 				$suites = $command['suites'];
 				if(is_string($suites)) {
 					$suites = [$suites];
@@ -106,19 +111,18 @@ class EventsScripting extends \Codeception\Platform\Extension
 						$environments = [$environments];
 					}
 
-					$evnironmentSupported = false;
+					$environmentSupported = false;
 					foreach($environments as $environment) {
-						if(in_array($environment, $this->currentEnvironment)) {
-							$evnironmentSupported = true;
-							break;
-						}
+						$environmentSupported = in_array($environment, $this->currentEnvironment);
+						if ($environmentSupported) {
+              break;
+            }
 					}
 
-					if(!$evnironmentSupported) {
+					if(!$environmentSupported) {
 						return;
 					}
 				}
-
 			}
 
 			$this->runSimpleCommand($commandLine, $description, $ignoreErrors);
@@ -128,20 +132,37 @@ class EventsScripting extends \Codeception\Platform\Extension
 		}
 	}
 
-    /**
-     * run each command
-     */
-	private function runCommands(array $commands) {
+  private function isPlatformSupported($platforms)
+  {
+    $platformSupported = false; // default value
+
+    if(is_string($platforms)) {
+      $platforms = [$platforms];
+    }
+    foreach($platforms as $platform) {
+      $platformSupported = preg_match("/{$platform}/i", PHP_OS);
+      if ($platformSupported) {
+        break;
+      }
+    }
+    return $platformSupported;
+  }
+
+  /**
+   * run each command
+   */
+	private function runCommands(array $commands)
+  {
 		foreach($commands as $command) {
 			$this->processCommand($command);
 		}
 	}
 
-    /**
-     * exctract and run config group (like BeforeAll)
-     */
-	private function runConfigGroup($groupName) {
-
+  /**
+   * exctract and run config group (like BeforeAll)
+   */
+	private function runConfigGroup($groupName)
+  {
 		if(!isset($this->config[$groupName])) {
 			return;
 		}
@@ -154,48 +175,34 @@ class EventsScripting extends \Codeception\Platform\Extension
 		$this->runCommands($commands);
 	}
 
-    // methods that handle events
+  // methods that handle events
 
-	private $beforeAllWereRun = false;
-
-    /**
-     * Module Init, run before any tests
-     */
-    public function beforeModule(\Codeception\Event\SuiteEvent $e)
-    {	
-		if($this->beforeAllWereRun) {
-			return;
-		}
-
-		$this->runConfigGroup('BeforeAll');
-
-		$this->beforeAllWereRun = true;
+  /**
+   * Module Init, run before any tests
+   */
+  public function beforeModule(\Codeception\Event\SuiteEvent $e)
+  {
+		if($this->beforeAllWereRun == false) {
+		    $this->runConfigGroup('BeforeAll');
+		    $this->beforeAllWereRun = true;
+    }
 	}
 
-	//may contain environment names, like  'acceptance (phantom)' or 'acceptance (phantom, chrome)'
-	private $currentSuite = '';
-	
-	//top level name - acceptance, functional
-	private $currentSuiteBaseName = '';
-
-	//array with environments enabled
-	private $currentEnvironment = [];
-	
 	/**
-     * Module After, run after any tests
-     */
-    public function afterModule()
-    {	
+   * Module After, run after any tests
+   */
+  public function afterModule()
+  {
 		$this->currentSuite = '';
 		$this->currentSuiteBaseName = '';
 		$this->currentEnvironment = [];
 		$this->runConfigGroup('AfterAll');
 	}
-	
+
 	/**
-     * Before suite is executed
-     */
-	public function beforeSuite(\Codeception\Event\SuiteEvent $e) 
+   * Before suite is executed
+   */
+	public function beforeSuite(\Codeception\Event\SuiteEvent $e)
 	{
 		$this->currentSuite = $e->getSuite()->getName();
 		$this->currentSuiteBaseName = $e->getSuite()->getBaseName();
@@ -208,21 +215,12 @@ class EventsScripting extends \Codeception\Platform\Extension
 		$this->runConfigGroup('BeforeSuite');
 	}
 
-    /**
-     * After suite is executed
-     */
-	public function afterSuite(\Codeception\Event\SuiteEvent $e) 
+  /**
+   * After suite is executed
+   */
+	public function afterSuite(\Codeception\Event\SuiteEvent $e)
 	{
 		$this->runConfigGroup('AfterSuite');
 	}
 
-	/*
-    public function beforeTest(\Codeception\Event\TestEvent $e) {}
-
-    public function beforeStep(\Codeception\Event\StepEvent $e) {}
-
-    public function testFailed(\Codeception\Event\FailEvent $e) {}
-
-	public function AfterPrint(\Codeception\Event\PrintResultEvent $e) {}
-	 */
 }

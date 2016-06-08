@@ -27,6 +27,12 @@ extensions:
                   ignoreErrors: true
             AfterAll:
                 - command: echo "After All"
+                - command: uname
+                  description: Platform *nx-like
+                  platforms: [darwin, linux, bsd, unix]
+                - command: ver
+                  description: Platform Windows
+                  platforms: windows
             BeforeSuite:
                 - command: echo "Before acceptance suite"
                   suites: ['acceptance']
