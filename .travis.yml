@@ -1,10 +1,9 @@
 language: php
 
 branches:
-  # Only test the master branch and SemVer tags.
+  # Only test the master branch
   only:
     - master
-    - /^[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+.*$/
 
 php:
   - 5.5
@@ -16,21 +15,11 @@ sudo: false
 
 cache:
   directories:
-    - test/vendor
-    - sample/vendor
+    - vendor
     - $HOME/.composer/cache
 
 before_script:
   - if [[ $TRAVIS_PHP_VERSION != hhvm ]]; then phpenv config-rm xdebug.ini; fi
-  - cd sample
-  - 'if [ "$TRAVIS_PHP_VERSION" = "5.4" ]; then rm composer.lock; fi'
-  - composer install -n --prefer-source
-  - cd ../test
-  - 'if [ "$TRAVIS_PHP_VERSION" = "5.4" ]; then rm composer.lock; fi'
-  - composer install -n --prefer-source
-  - cd ../
 
 script:
- - cd test
  - ./vendor/bin/codecept run
-
