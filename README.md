@@ -55,6 +55,7 @@ supported next attributes:
 - ignoreErrors - don't break testing if command fails (failed or retval != 0) 
 - suites - single name or array of suites to run command for (applied to base name, like 'acceptance' as well to long name 'acceptance (phantom, firefox)')
 - environments - single name or array of environments 
+- platforms -  single name or array of platforms (uses `PHP_OS` constant, i.e. the platform where PHP was built, check [here](http://php.net/manual/en/function.php-uname.php) for details)
 
 
 ```yml
@@ -76,6 +77,12 @@ extensions:
                   ignoreErrors: true
             AfterAll:
                 - command: echo "After All"
+                - command: uname
+                  description: Platform *nx-like
+                  platforms: [darwin, linux, bsd, unix]
+                - command: ver
+                  description: Platform Windows
+                  platforms: windows
             BeforeSuite:
                 - command: echo "Before acceptance suite"
                   suites: ['acceptance']
