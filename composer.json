@@ -11,11 +11,11 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "codeception/codeception": "^2.2"
+		    "codeception/codeception": "^2.2"
     },
     "autoload": {
         "psr-4": {
-             "Codeception\\Extension\\": "src/"
+			       "Codeception\\Extension\\": "src/"
         }
     },
     "config": {
