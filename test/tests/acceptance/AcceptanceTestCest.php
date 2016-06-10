@@ -3,6 +3,14 @@
 
 class AcceptanceTestCest
 {
+	public function _before(AcceptanceTester $I)
+	{
+	}
+
+	public function _after(AcceptanceTester $I)
+	{
+	}
+	
 	private $beforeAllSmall = <<<'EOF'
 Starting : echo "Before All"
 Before All
@@ -87,6 +95,17 @@ EOF;
     {
 		chdir('../sample/');
 		$I->runShellCommand('./vendor/bin/codecept run --no-colors');
+		$I->seeInShellOutput("Functional Tests");
+		$I->seeInShellOutput("Acceptance Tests");
+		$I->seeInShellOutput($this->beforeAllSmall);
+		$I->seeInShellOutput($this->beforeAll);
+		$I->seeInShellOutput($this->beforeAnySuite);
+		$I->seeInShellOutput($this->afterAnySuite);
+		$I->seeInShellOutput($this->afterAll);
+		$I->seeInShellOutput($this->beforeAcceptanceSuite);
+		$I->seeInShellOutput($this->afterAcceptanceSuite);
+		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
+		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
 		chdir('../test/');
     }
 	
@@ -137,7 +156,7 @@ Before acceptance suite, phantom environment
 EOF;
 	
 	public function withSuitedEnvironmentTwoCommandsTest(AcceptanceTester $I)
-    {
+	{
 		chdir('../sample/');
 		$I->runShellCommand('./vendor/bin/codecept run acceptance --env phantom,firefox --no-colors');
 		$I->dontSeeInShellOutput("Functional Tests");
@@ -152,16 +171,16 @@ EOF;
 		$I->seeInShellOutput($this->twoEnvironmentsOut);
 		$I->seeInShellOutput($this->oneEnvironmentsOut);
 		chdir('../test/');
-  }
+	}
 
-  public function withPlatformsTest(AcceptanceTester $I)
-  {
+	public function withPlatformsTest(AcceptanceTester $I)
+	{
 		chdir('../sample/');
 		$I->runShellCommand('./vendor/bin/codecept run acceptance --no-colors');
 		$I->dontSeeInShellOutput("Functional Tests");
 		$I->seeInShellOutput("Acceptance Tests");
 		$I->seeInShellOutput(PHP_OS);
 		chdir('../test/');
-  }
+	}
 
 }
