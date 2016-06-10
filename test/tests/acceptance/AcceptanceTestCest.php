@@ -43,6 +43,7 @@ EOF;
 	private $afterAll = <<<'EOF'
 Starting : echo "After All"
 After All
+Starting : Platform
 EOF;
 	
 	private $beforeAcceptanceSuite = <<<'EOF'
@@ -70,6 +71,7 @@ EOF;
 		$I->dontSeeInShellOutput($this->afterAcceptanceSuite);
 		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
 		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
+		$I->seeInShellOutput(PHP_OS);
 		chdir('../test/');
     }
 
@@ -88,6 +90,7 @@ EOF;
 		$I->seeInShellOutput($this->afterAcceptanceSuite);
 		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
 		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
+		$I->seeInShellOutput(PHP_OS);
 		chdir('../test/');
     }
 
@@ -106,6 +109,7 @@ EOF;
 		$I->seeInShellOutput($this->afterAcceptanceSuite);
 		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
 		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
+		$I->seeInShellOutput(PHP_OS);
 		chdir('../test/');
     }
 	
@@ -124,6 +128,7 @@ EOF;
 		$I->seeInShellOutput($this->afterAcceptanceSuite);
 		$I->dontSeeInShellOutput($this->twoEnvironmentsOut);
 		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
+		$I->seeInShellOutput(PHP_OS);
 		chdir('../test/');
     }
 	
@@ -147,6 +152,7 @@ EOF;
 		$I->seeInShellOutput($this->afterAcceptanceSuite);
 		$I->seeInShellOutput($this->twoEnvironmentsOut);
 		$I->dontSeeInShellOutput($this->oneEnvironmentsOut);
+		$I->seeInShellOutput(PHP_OS);
 		chdir('../test/');
     }
 	
@@ -170,15 +176,6 @@ EOF;
 		$I->seeInShellOutput($this->afterAcceptanceSuite);
 		$I->seeInShellOutput($this->twoEnvironmentsOut);
 		$I->seeInShellOutput($this->oneEnvironmentsOut);
-		chdir('../test/');
-	}
-
-	public function withPlatformsTest(AcceptanceTester $I)
-	{
-		chdir('../sample/');
-		$I->runShellCommand('./vendor/bin/codecept run acceptance --no-colors');
-		$I->dontSeeInShellOutput("Functional Tests");
-		$I->seeInShellOutput("Acceptance Tests");
 		$I->seeInShellOutput(PHP_OS);
 		chdir('../test/');
 	}
