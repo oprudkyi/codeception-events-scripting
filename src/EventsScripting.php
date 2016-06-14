@@ -24,19 +24,11 @@ class EventsScripting extends \Codeception\Platform\Extension
 
 		//After suite was executed
 		'suite.after' => 'afterSuite',
-
-		/*
-        'test.before' => 'beforeTest',
-        'step.before' => 'beforeStep',
-        'test.fail' => 'testFailed',
-        'result.print.after' => 'print',
-		*/
 	);
 
 	public function __construct($config, $options)
 	{
 		parent::__construct($config, $options);
-		//print_r($this->config);
 	}
 
 	public function __destruct()
@@ -97,6 +89,13 @@ class EventsScripting extends \Codeception\Platform\Extension
 				}
 			}
 
+            // check if environments are supported
+            if(isset($command['environments'])) {
+                if(!$this->isEnvironmentSupported($command['environments'])) {
+                    return;
+                }
+            }
+
 			if(!empty($this->currentSuite) && isset($command['suites'])) {
 				$suites = $command['suites'];
 				if(is_string($suites)) {
@@ -107,25 +106,6 @@ class EventsScripting extends \Codeception\Platform\Extension
 					&& !in_array($this->currentSuiteBaseName, $suites)
 				) {
 					return;
-				}
-
-				if(isset($command['environments'])) {
-					$environments = $command['environments'];
-					if(is_string($environments)) {
-						$environments = [$environments];
-					}
-
-					$environmentSupported = false;
-					foreach($environments as $environment) {
-						if(in_array($environment, $this->currentEnvironment)) {
-							$environmentSupported = true;
-							break;
-						}
-					}
-
-					if(!$environmentSupported) {
-						return;
-					}
 				}
 			}
 
@@ -150,6 +130,40 @@ class EventsScripting extends \Codeception\Platform\Extension
 			}
 		}
 		return $platformSupported;
+	}
+
+    private function isEnvironmentSupported($environments)
+	{
+        $environmentSupported = false;
+
+        // if beforeAll or afterAll then use complete list of env
+        if ($this->beforeAllWereRun !== true) {
+            $selectedEnvironments = $this->options['env'];
+            if (!empty($selectedEnvironments)) {
+                $envArray = [];
+                foreach (array_unique($selectedEnvironments) as $envList) {
+                    $envArray = array_merge($envArray, explode(',', $envList));
+                }
+            } else {
+                return $environmentSupported;
+            }
+        // else use environments from current run instance
+        } else {
+            $envArray = $this->currentEnvironment;
+        }
+
+        if(is_string($environments)) {
+            $environments = [$environments];
+        }
+        foreach($environments as $environment) {
+            if(in_array($environment, $envArray)) {
+                $environmentSupported = true;
+                break;
+            }
+        }
+
+        return $environmentSupported;
+
 	}
 
 	/**
@@ -196,13 +210,13 @@ class EventsScripting extends \Codeception\Platform\Extension
 
 	//may contain environment names, like  'acceptance (phantom)' or 'acceptance (phantom, chrome)'
 	private $currentSuite = '';
-	
+
 	//top level name - acceptance, functional
 	private $currentSuiteBaseName = '';
 
 	//array with environments enabled
 	private $currentEnvironment = [];
-	
+
 	/**
 	* Module After, run after any tests
 	*/
@@ -211,6 +225,7 @@ class EventsScripting extends \Codeception\Platform\Extension
 		$this->currentSuite = '';
 		$this->currentSuiteBaseName = '';
 		$this->currentEnvironment = [];
+        $this->beforeAllWereRun = false;
 		$this->runConfigGroup('AfterAll');
 	}
 
@@ -237,14 +252,4 @@ class EventsScripting extends \Codeception\Platform\Extension
 	{
 		$this->runConfigGroup('AfterSuite');
 	}
-
-	/*
-    public function beforeTest(\Codeception\Event\TestEvent $e) {}
-
-    public function beforeStep(\Codeception\Event\StepEvent $e) {}
-
-    public function testFailed(\Codeception\Event\FailEvent $e) {}
-
-	public function AfterPrint(\Codeception\Event\PrintResultEvent $e) {}
-	 */
 }

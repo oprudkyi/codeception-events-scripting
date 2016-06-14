@@ -19,12 +19,14 @@ extensions:
                 - command: echo "Before All with Description"
                   description: Description of command
                 - echo "Before All single line"
-                - command: echo 
+                - command: echo
                   params: "Before All Params"
                   description: Before All with Params
                 - command: "false"
                   description: BeforeAll. fail on run but ignore errors
                   ignoreErrors: true
+                - command: echo "Before All suite with phantom environment"
+                  environments: phantom
             AfterAll:
                 - command: echo "After All"
                 - command: uname
@@ -33,6 +35,8 @@ extensions:
                 - command: ver
                   description: Platform Windows
                   platforms: windows
+                - command: echo "After All suite with phantom,chrome environments"
+                  environments: ['phantom', 'chrome']
             BeforeSuite:
                 - command: echo "Before acceptance suite"
                   suites: ['acceptance']
