@@ -12,7 +12,7 @@ namespace Codeception\Extension;
 
 use Codeception\Exception\ExtensionException;
 
-class EventsScripting extends \Codeception\Platform\Extension
+class EventsScripting extends \Codeception\Extension
 {
 	// list events to listen to
 	public static $events = array(
